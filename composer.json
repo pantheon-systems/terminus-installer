@@ -1,0 +1,17 @@
+{
+    "name": "pantheon-systems/janus",
+    "description": "An installer for the Terminus CLI",
+    "type": "installer",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sara McCutcheon",
+            "email": "sara@getpantheon.com"
+        }
+    ],
+    "minimum-stability": "beta",
+    "prefer-stable": true,
+    "require": {
+        "consolidation/robo": "^1.0"
+    }
+}
