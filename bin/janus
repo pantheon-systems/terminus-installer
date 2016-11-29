@@ -1,0 +1,47 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * This runs the Terminus installer. It does the following:
+ *    - Includes the Composer autoload file
+ *    - Starts a container with input, output, and application objectss
+ *    - Searches for and loads commands
+ *    - Runs the command
+ *    - Exits with a status code
+ */
+
+// Include the Composer autoload file
+$phar_path = \Phar::running(true);
+if ($phar_path) {
+    include_once "$phar_path/vendor/autoload.php";
+} else {
+    if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+        include_once __DIR__ . '/../vendor/autoload.php';
+    } elseif (file_exists(__DIR__ . '/../../../autoload.php')) {
+        include_once __DIR__ . '/../../../autoload.php';
+    }
+}
+
+// Starring
+use Consolidation\AnnotatedCommand\CommandFileDiscovery;
+use Robo\Robo;
+use Robo\Runner;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+// Creating conatiner
+$input = new ArgvInput($_SERVER['argv']);
+$output = new ConsoleOutput();
+$application = new Application('Terminus Installer', '0.0.1');
+$container = Robo::createDefaultContainer($input, $output, $application);
+
+// Discovering installation 
+$discovery = new CommandFileDiscovery();
+$discovery->setSearchPattern('*Command.php')->setSearchLocations([]);
+$commands = $discovery->discover(__DIR__ . '/../src/Commands', 'Pantheon\Janus\Commands');
+
+// Running Terminus Installer
+$runner = new Runner($container);
+$status_code = $runner->run($input, $output, null, $commands);
+exit($status_code);
