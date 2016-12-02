@@ -8,7 +8,9 @@
     "minimum-stability": "beta",
     "prefer-stable": true,
     "require": {
-        "consolidation/robo": "^1.0"
+        "consolidation/robo": "^1.0",
+        "rmccue/requests": "^1.7",
+        "symfony/yaml": "^3.2"
     },
     "autoload": {
         "psr-4": {
