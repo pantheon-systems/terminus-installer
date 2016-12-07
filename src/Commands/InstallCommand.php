@@ -2,6 +2,8 @@
 
 namespace Pantheon\Janus\Commands;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
@@ -9,8 +11,10 @@ use Symfony\Component\Yaml\Yaml;
  * Class InstallCommand
  * @package Pantheon\Janus\Commands
  */
-class InstallCommand
+class InstallCommand implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var string
      */
@@ -48,14 +52,14 @@ class InstallCommand
         if (is_null($composer_exe = $options['composer-file'])) {
             $has_composer = (trim(shell_exec('type composer > /dev/null; echo $?')) === '0');
             if (!$has_composer) {
-                echo "Installing the Composer package manager...\n";
+                $this->logger->notice('Installing the Composer package manager...');
                 shell_exec("curl -sS https://getcomposer.org/installer && mv composer.json {$options['bin-dir']}/composer");
             }
             $composer_exe = 'composer';
         }
 
         // Use Composer to install Terminus
-        echo "Installing Terminus...\n";
+        $this->logger->notice('Installing Terminus...');
         $home_dir = $this->getHomeDir();
         $fs = $this->getFilesystem();
 
@@ -76,7 +80,7 @@ class InstallCommand
             ARRAY_FILTER_USE_BOTH
         );
         if (!empty($settings)) {
-            echo "Writing configuration file...\n";
+            $this->logger->notice('Writing configuration file...');
             $this->writeTerminusConfig($settings);
         }
     }
