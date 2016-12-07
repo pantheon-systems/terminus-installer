@@ -14,6 +14,10 @@ class InstallCommand
     /**
      * @var string
      */
+    const SOURCE = 'pantheon-systems/terminus';
+    /**
+     * @var string
+     */
     const PREFIX = 'TERMINUS_';
     /**
      * @var Filesystem
@@ -57,10 +61,10 @@ class InstallCommand
 
         if (isset($options['install-dir']) && !is_null($install_dir = $options['install-dir'])) {
             $install_dir = str_replace('~', $home_dir, $install_dir);
-            exec("cd $install_dir ; $composer_exe require pantheon-systems/terminus");
+            exec("cd $install_dir ; $composer_exe require " . self::SOURCE);
         } else {
             $install_dir = "$home_dir/.composer";
-            exec("$composer_exe global require pantheon-systems/terminus");
+            exec("$composer_exe global require " . self::SOURCE);
         }
         $fs->symlink("$install_dir/vendor/bin/terminus", "{$options['bin-dir']}/terminus");
 

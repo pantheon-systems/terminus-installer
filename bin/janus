@@ -23,25 +23,16 @@ if ($phar_path) {
 }
 
 // Starring
-use Consolidation\AnnotatedCommand\CommandFileDiscovery;
 use Robo\Robo;
 use Robo\Runner;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-// Creating conatiner
-$input = new ArgvInput($_SERVER['argv']);
-$output = new ConsoleOutput();
-$application = new Application('Terminus Installer', '0.0.1');
-$container = Robo::createDefaultContainer($input, $output, $application);
-
-// Discovering installation 
-$discovery = new CommandFileDiscovery();
-$discovery->setSearchPattern('*Command.php')->setSearchLocations([]);
-$commands = $discovery->discover(__DIR__ . '/../src/Commands', 'Pantheon\Janus\Commands');
-
 // Running Terminus Installer
-$runner = new Runner($container);
-$status_code = $runner->run($input, $output, null, $commands);
+$input = new ArgvInput(array_merge([$_SERVER['argv'][0],], ['install'], array_splice($_SERVER['argv'], 1)));
+$output = new ConsoleOutput();
+$runner = new Runner(Robo::createDefaultContainer($input, $output, new Application('Terminus Installer', '0.0.1')));
+$command = [__DIR__ . '/../src/Commands/InstallCommand.php' => 'Pantheon\Janus\Commands\InstallCommand',];
+$status_code = $runner->run($input, $output, null, $command);
 exit($status_code);
