@@ -9,10 +9,8 @@
     "prefer-stable": true,
     "require": {
         "consolidation/robo": "^1.0",
-        "rmccue/requests": "^1.7",
         "symfony/yaml": "^3.2",
-        "symfony/filesystem": "^3.2",
-        "symfony/finder": "^3.2"
+        "symfony/filesystem": "^3.2"
     },
     "autoload": {
         "psr-4": {
