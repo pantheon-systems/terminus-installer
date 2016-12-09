@@ -1,5 +1,7 @@
 Use the following line to install Terminus:
-`curl -O https://dev-tesladethray.pantheonsite.io/mono/installer && php installer`
+```
+curl -O https://raw.githubusercontent.com/pantheon-systems/terminus-installer/master/builds/installer.phar && php installer.phar
+```
 
 There are options you can set to configure your installation.
 - `--bin-dir=<dir>` Where `<dir>` is the location of your bin directory. Defaults to `/usr/local/bin`.
