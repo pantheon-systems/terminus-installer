@@ -12,4 +12,6 @@ There are options you can set to configure your installation.
 - `--date-format=<format>` Where `<format>` is the PHP-standard format for timestamps. Default is `Y-m-d H:i:s`.
 
 These can be used by adding them to the installer call from above like so:
-`curl -O https://dev-tesladethray.pantheonsite.io/mono/installer && php installer --time-zone=America/Los_Angeles --date-format='M D, Y h:i' --composer-file=~/bin/composer.json`
+```
+curl -O https://raw.githubusercontent.com/pantheon-systems/terminus-installer/master/builds/installer.phar && php installer.phar --time-zone=America/Los_Angeles --date-format='M D, Y h:i' --composer-file=~/bin/composer.json
+```
