@@ -1,9 +1,9 @@
 # terminus-installer : An installer script for Terminus, Pantheon's CLI
  
 ## Status
-Build status button here
+[![Build Status](https://travis-ci.org/pantheon-systems/terminus-installer.svg?branch=master)](https://travis-ci.org/pantheon-systems/terminus-installer)
 [![Dependency Status](https://gemnasium.com/pantheon-systems/terminus-installer.svg)](https://gemnasium.com/pantheon-systems/terminus-installer)
-Code coverage button here
+[![Coverage Status](https://coveralls.io/repos/github/pantheon-systems/terminus-installer/badge.svg?branch=master)](https://coveralls.io/github/pantheon-systems/terminus-installer?branch=master)
  
 ## About
 This repository houses the source for and PHAR archive of the Terminus Installer script. Its goal is to provide a
