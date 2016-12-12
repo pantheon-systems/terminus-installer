@@ -2,7 +2,7 @@
  
 ## Status
 Build status button here
-Dependencies status button here
+[![Dependency Status](https://gemnasium.com/pantheon-systems/terminus-installer.svg)](https://gemnasium.com/pantheon-systems/terminus-installer)
 Code coverage button here
  
 ## About
