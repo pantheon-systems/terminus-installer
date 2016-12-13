@@ -1,0 +1,36 @@
+language: php
+
+branches:
+  # Only test the master branch and semantic version tags.
+  only:
+    - master
+    - /^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+.*$/
+
+php:
+  - 5.5
+  - 5.6
+  - 7.0
+
+sudo: false
+
+before_script:
+  - set -ex
+  - composer install --no-interaction --prefer-dist
+#  - ./scripts/build.sh
+
+script:
+  - vendor/bin/phpunit -c tests/config/phpunit.xml.dist --coverage-clover tests/logs/clover.xml
+  - phpenv config-rm xdebug.ini  # XDebug is needed for code coverage, but makes things slow. It's enabled by default in Travis, we disable it here post-coverage run for speedy builds.
+#  - ./scripts/test.sh
+
+after_success:
+  - php vendor/bin/coveralls -v -c tests/config/coveralls.xml
+
+notifications:
+  email:
+    on_success: never
+
+cache:
+  directories:
+    - $HOME/.cache/composer
+    - $HOME/.composer/cache
