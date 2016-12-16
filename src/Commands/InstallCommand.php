@@ -5,6 +5,7 @@ namespace Pantheon\Janus\Commands;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -23,6 +24,10 @@ class InstallCommand implements LoggerAwareInterface
      * @var string
      */
     const PREFIX = 'TERMINUS_';
+    /**
+     * @var integer
+     */
+    const TIMEOUT = 3600;
     /**
      * @var Filesystem
      */
@@ -48,30 +53,49 @@ class InstallCommand implements LoggerAwareInterface
         'time-zone' => null,
         'date-format' => null,
     ]) {
+        $fs = $this->getFilesystem();
+        $bin_dir = $options['bin-dir'];
+        $bin_is_writable = $fs->exists($bin_dir) && is_writable($bin_dir);
+
         // Find or install a copy of Composer
         if (is_null($composer_exe = $options['composer-file'])) {
             $has_composer = (trim(shell_exec('type composer > /dev/null; echo $?')) === '0');
+            $composer_exe = 'composer';
+
+            // If Composer is not present, download it
             if (!$has_composer) {
                 $this->logger->notice('Installing the Composer package manager...');
-                shell_exec("curl -sS https://getcomposer.org/installer && mv composer.json {$options['bin-dir']}/composer");
+                $this->getProcess("curl -sS https://getcomposer.org/installer")->run();
+
+                // If the bin dir is writable, move Composer into that dir
+                if ($bin_is_writable) {
+                    $fs->rename('composer.phar', "$bin_dir/composer");
+                } else { // Else, all moves into the bin dir should be skipped
+                    $composer_exe = 'composer.json';
+                }
             }
-            $composer_exe = 'composer';
         }
 
         // Use Composer to install Terminus
         $this->logger->notice('Installing Terminus...');
         $home_dir = $this->getHomeDir();
-        $fs = $this->getFilesystem();
 
+        $install_command = "$composer_exe require " . self::SOURCE;
         if (isset($options['install-dir']) && !is_null($install_dir = $options['install-dir'])) {
             $install_dir = str_replace('~', $home_dir, $install_dir);
-            exec("cd $install_dir ; $composer_exe require " . self::SOURCE);
+            $install_command = "cd $install_dir ; $install_command";
         } else {
-            $install_dir = "$home_dir/.composer";
-            exec("$composer_exe global require " . self::SOURCE);
+            $install_dir = getcwd();
         }
-        $fs->symlink("$install_dir/vendor/bin/terminus", "{$options['bin-dir']}/terminus");
+        $this->getProcess($install_command)->run();
+        if ($bin_is_writable) {
+            $fs->symlink("$install_dir/vendor/bin/terminus", "$bin_dir/terminus");
+        } else {
+            $this->logger->warning("Terminus was installed, but the installer was not able to write to your bin dir. To enable the `terminus` command, add this alias to your .bash_profile (Mac) or .bashrc (Linux) file:\nalias terminus=$install_dir/bin/terminus");
+            $fs->remove($composer_exe);
+        }
 
+        // If global settings were given, write them to the global config file.
         $settings = array_filter(
             $options,
             function ($value, $key) {
@@ -131,6 +155,19 @@ class InstallCommand implements LoggerAwareInterface
             }
         }
         return $home;
+    }
+
+    /**
+     * Returns a set-up process object.
+     *
+     * @param string $cmd The command to execute
+     * @return Process
+     */
+    protected function getProcess($cmd)
+    {
+        $process = new Process($cmd);
+        $process->setTimeout(self::TIMEOUT);
+        return $process;
     }
 
     /**
