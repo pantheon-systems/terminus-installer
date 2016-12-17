@@ -95,14 +95,12 @@ class InstallCommand implements LoggerAwareInterface
             $fs->remove($composer_exe);
         }
 
-        // If global settings were given, write them to the global config file.
-        $settings = array_filter(
-            $options,
-            function ($value, $key) {
-                return !empty($value) && in_array($key, ['cache-dir', 'date-format', 'time-zone',]);
-            },
-            ARRAY_FILTER_USE_BOTH
-        );
+        $settings = [];
+        foreach ($options as $key => $value) {
+            if (!empty($value) && in_array($key, ['cache-dir', 'date-format', 'time-zone',])) {
+                $settings[$key] = $value;
+            }
+        }
         if (!empty($settings)) {
             $this->logger->notice('Writing configuration file...');
             $this->writeTerminusConfig($settings);
