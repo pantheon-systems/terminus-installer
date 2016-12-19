@@ -47,6 +47,7 @@ $finder
     ->files()
     ->ignoreVCS(true)
     ->in('./src')
+    ->in('./assets')
     ->in('./vendor/composer')
     ->in('./vendor/justinrainbow')
     ->in('./vendor/psr')
