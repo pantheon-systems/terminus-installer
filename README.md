@@ -44,7 +44,6 @@ _No tips at present._
 ## Known Issues/Limitations
 - If the `bin` directory is unavailable, Terminus cannot be automatically set up as a command. A symlink or an alias
 to the Terminus executable be made in either the `~/.bashrc` or `~/.bash_profile` files.
-- The installer only can search the PHP path for Composer, not `$PATH`.
  
 ## Runtime Dependencies
 - A command-line client
