@@ -1,3 +1,10 @@
-/vendor/
-.idea
+/vendor
+/*.phar
+/builds
+
 .DS_Store
+*.sw*
+.env
+.idea
+.vagrant
+Vagrantfile
