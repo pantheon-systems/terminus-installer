@@ -1,21 +1,21 @@
 {
-    "name": "pantheon-systems/janus",
+    "name": "pantheon-systems/terminus-installer",
     "description": "An installer for the Terminus CLI",
-    "keywords": [ "cli", "pantheon", "terminus", "drupal", "wordpress", "installer" ],
+    "keywords": ["cli", "pantheon", "terminus", "drupal", "wordpress", "installer"],
     "type": "installer",
     "license": "MIT",
     "homepage": "https://pantheon.io",
     "minimum-stability": "beta",
     "prefer-stable": true,
     "require": {
-        "consolidation/robo": "^1.0",
-        "symfony/yaml": "^3.1",
-        "symfony/filesystem": "^3.1",
-        "symfony/process": "^3.2"
+        "php": ">=5.5.9",
+        "composer/composer": "^1.2",
+        "rmccue/requests": "^1.7",
+        "symfony/yaml": "^3.2"
     },
     "autoload": {
         "psr-4": {
-            "Pantheon\\Janus\\": "src/"
+          "Pantheon\\TerminusInstaller\\": "src/"
         }
     },
     "require-dev": {
