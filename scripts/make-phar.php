@@ -39,7 +39,7 @@ $phar = new Phar(DEST_PATH, 0, 'installer.phar');
 
 $phar->startBuffering();
 
-addFile($phar, './bin/janus', ['offset' => 1,]);
+addFile($phar, './bin/installer', ['offset' => 1,]);
 
 // PHP files
 $finder = new Finder();
@@ -47,10 +47,16 @@ $finder
     ->files()
     ->ignoreVCS(true)
     ->in('./src')
-    ->in('./vendor');
+    ->in('./vendor/composer')
+    ->in('./vendor/justinrainbow')
+    ->in('./vendor/psr')
+    ->in('./vendor/seld')
+    ->in('./vendor/symfony');
 
 foreach ($finder as $file) {
-    addFile($phar, $file);
+    if (strpos($file->getPath(), 'Test') === false) {
+        addFile($phar, $file);
+    }
 }
 
 addFile($phar, './vendor/autoload.php');
@@ -61,7 +67,7 @@ $phar->setStub(
 #!/usr/bin/env php
 <?php
 Phar::mapPhar();
-include 'phar://installer.phar/bin/janus';
+include 'phar://installer.phar/bin/installer';
 __HALT_COMPILER();
 ?>
 EOB

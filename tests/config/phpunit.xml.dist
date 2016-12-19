@@ -1,0 +1,16 @@
+<phpunit colors="true">
+  <testsuites>
+    <testsuite>
+      <directory suffix="Test.php">../unit_tests/</directory>
+    </testsuite>
+  </testsuites>
+  <filter>
+    <whitelist>
+        <directory suffix=".php">../../src/</directory>
+        <file>../../bin/installer</file>
+        <exclude>
+            <directory suffix=".php">../../vendor/</directory>
+        </exclude>
+    </whitelist>
+  </filter>    
+</phpunit>
