@@ -25,12 +25,6 @@ Use the following line to install Terminus:
 ```
 curl -O https://raw.githubusercontent.com/pantheon-systems/terminus-installer/master/builds/installer.phar && php installer.phar install
 ```
-The installer will attempt to do the following:
-
-1. Search for Composer. If it is not present, the installer will install it to your `bin` directory for you.
-2. Installs Terminus via Composer. If no install location was given, it will install Terminus globally.
-3. If the `time-zone`, `date-format`, and/or `cache-dir` options were provided, the installer will update your global
-Terminus configuration file at `$HOME/.terminus/config.yml`.
 
 ### Developing
 0. Create an issue on this repository to discuss the change you propose should be made.
