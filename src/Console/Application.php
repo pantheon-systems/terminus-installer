@@ -7,7 +7,7 @@ use Symfony\Component\Console\Application as BaseApplication;
 
 /**
  * Class Application
- * @package Pantheon\Janus\Console
+ * @package Pantheon\TerminusInstaller\Console
  */
 class Application extends BaseApplication
 {

@@ -1,7 +1,4 @@
 /vendor
-/*.phar
-/builds
-
 .DS_Store
 *.sw*
 .env

@@ -23,7 +23,7 @@ those simply wanting a single-step process to get it running on their local mach
 ### Running
 Use the following line to install Terminus:
 ```
-curl -O https://raw.githubusercontent.com/pantheon-systems/terminus-installer/master/builds/installer.phar && php installer.phar
+curl -O https://raw.githubusercontent.com/pantheon-systems/terminus-installer/master/builds/installer.phar && php installer.phar install
 ```
 The installer will attempt to do the following:
 
@@ -66,7 +66,7 @@ There are options you can set to configure your installation.
 
 These can be used by adding them to the installer call from above like so:
 ```
-curl -O https://raw.githubusercontent.com/pantheon-systems/terminus-installer/master/builds/installer.phar && php installer.phar --install-version=1.2.3 --install-dir=/tmp/terminus
+curl -O https://raw.githubusercontent.com/pantheon-systems/terminus-installer/master/builds/installer.phar && php installer.phar install --install-version=1.2.3 --install-dir=/tmp/terminus
 ```
  
 ## Testing
