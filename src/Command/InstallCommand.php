@@ -3,8 +3,6 @@
 namespace Pantheon\TerminusInstaller\Command;
 
 use Composer\Console\Application as ComposerApp;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,32 +14,16 @@ use Symfony\Component\Filesystem\Filesystem;
  * Class InstallCommand
  * @package Pantheon\TerminusInstaller\Command
  */
-class InstallCommand extends Command implements LoggerAwareInterface
+class InstallCommand extends Command
 {
-    use LoggerAwareTrait;
-
     const PACKAGE = 'pantheon-systems/terminus';
     const PREFIX = 'TERMINUS_';
     const TIMEOUT = 3600;
 
     /**
-     * @var Filesystem
-     */
-    private $filesystem;
-    /**
      * @var OutputInterface
      */
     private $output;
-
-    /**
-     * @return ComposerApp A configured Composer Application object
-     */
-    protected function getComposer()
-    {
-        $composer_app = new ComposerApp();
-        $composer_app->setAutoExit(false);
-        return $composer_app;
-    }
 
     protected function configure()
     {
@@ -70,16 +52,21 @@ class InstallCommand extends Command implements LoggerAwareInterface
     }
 
     /**
-     * Returns a Filesystem object.
-     *
-     * @return Filesystem
+     * @return ComposerApp A configured Composer Application object
+     */
+    protected function getComposer()
+    {
+        $composer_app = new ComposerApp();
+        $composer_app->setAutoExit(false);
+        return $composer_app;
+    }
+
+    /**
+     * @return Filesystem A configured Symfony Filesystem object
      */
     protected function getFilesystem()
     {
-        if (empty($this->filesystem)) {
-            $this->filesystem = new Filesystem();
-        }
-        return $this->filesystem;
+        return new Filesystem();
     }
 
     /**
