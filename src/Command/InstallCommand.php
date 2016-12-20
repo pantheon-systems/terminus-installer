@@ -33,6 +33,16 @@ class InstallCommand extends Command implements LoggerAwareInterface
      */
     private $output;
 
+    /**
+     * @return ComposerApp A configured Composer Application object
+     */
+    protected function getComposer()
+    {
+        $composer_app = new ComposerApp();
+        $composer_app->setAutoExit(false);
+        return $composer_app;
+    }
+
     protected function configure()
     {
         $this->setName('install')
@@ -48,13 +58,15 @@ class InstallCommand extends Command implements LoggerAwareInterface
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return integer $status_code The status code returned from Composer
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->output = $output;
         $install_dir = $this->getInstallDir($input->getOption('install-dir'));
-        $this->installTerminus($install_dir, $input->getOption('install-version'));
+        $status_code = $this->installTerminus($install_dir, $input->getOption('install-version'));
         $this->makeSymlink($input->getOption('bin-dir'), $install_dir);
+        return $status_code;
     }
 
     /**
@@ -115,6 +127,7 @@ class InstallCommand extends Command implements LoggerAwareInterface
      *
      * @param string $install_dir Directory to which to install Terminus
      * @param string $install_version Version of Terminus to install
+     * @return integer $status_code The status code of the installation run
      */
     protected function installTerminus($install_dir, $install_version = null) {
         $arguments = [
@@ -123,9 +136,9 @@ class InstallCommand extends Command implements LoggerAwareInterface
             '--working-dir' => $install_dir,
         ];
 
-        $composer_app = new ComposerApp();
         $this->output->writeln('Installing Terminus...');
-        $composer_app->run(new ArrayInput($arguments), $this->output);
+        $status_code = $this->getComposer()->run(new ArrayInput($arguments), $this->output);
+        return $status_code;
     }
 
     /**
