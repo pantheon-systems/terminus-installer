@@ -50,7 +50,6 @@ $finder
     ->in('./assets')
     ->in('./vendor/composer')
     ->in('./vendor/justinrainbow')
-    ->in('./vendor/psr')
     ->in('./vendor/seld')
     ->in('./vendor/symfony');
 
