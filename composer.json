@@ -9,9 +9,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=5.5.9",
-        "composer/composer": "^1.2",
-        "rmccue/requests": "^1.7",
-        "symfony/yaml": "^3.2"
+        "composer/composer": "^1.2"
     },
     "autoload": {
         "psr-4": {

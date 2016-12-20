@@ -48,8 +48,9 @@ $finder
     ->ignoreVCS(true)
     ->in('./src')
     ->in('./assets')
-    ->in('./vendor/composer')
+    ->in('./vendor/composer') // Includes vendor/composer/ca-bundle/res/cacert.pem
     ->in('./vendor/justinrainbow')
+    ->in('./vendor/psr')
     ->in('./vendor/seld')
     ->in('./vendor/symfony');
 
@@ -60,7 +61,6 @@ foreach ($finder as $file) {
 }
 
 addFile($phar, './vendor/autoload.php');
-addFile($phar, './vendor/rmccue/requests/library/Requests/Transport/cacert.pem');
 
 $phar->setStub(
     <<<EOB
