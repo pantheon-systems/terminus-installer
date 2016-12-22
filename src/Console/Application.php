@@ -13,7 +13,7 @@ class Application extends BaseApplication
 {
     const NAME = 'Terminus Installer';
     const VERSION = '0.0.1';
-    private $logo_file = __DIR__ . '/../../assets/fist.txt';
+    private $logo_file = '../../assets/fist.txt';
 
     /**
      * @inheritdoc
@@ -28,7 +28,7 @@ class Application extends BaseApplication
      */
     public function getHelp()
     {
-        return base64_decode(file_get_contents($this->logo_file))
+        return base64_decode(file_get_contents(__DIR__ . '/' . $this->logo_file))
             . PHP_EOL
             . parent::getHelp();
     }
