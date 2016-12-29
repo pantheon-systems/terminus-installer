@@ -32,7 +32,7 @@ class InstallCommand extends Command
             ->setDefinition([
                 new InputOption('bin-dir', null, InputOption::VALUE_OPTIONAL, 'Directory in which command-line executable scripts are added', '/usr/local/bin'),
                 new InputOption('install-dir', null, InputOption::VALUE_OPTIONAL, 'Directory to which to install Terminus', getcwd()),
-                new InputOption('install-version', null, InputOption::VALUE_OPTIONAL, 'Version of Terminus to install'),
+                new InputOption('install-version', null, InputOption::VALUE_OPTIONAL, 'Version of Terminus to install', '1.0.0-beta.1'),
             ])
             ->setHelp('Installs the Terminus CLI.');
     }
