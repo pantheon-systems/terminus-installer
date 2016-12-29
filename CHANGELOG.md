@@ -1,0 +1,9 @@
+#Change Log
+All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org)
+
+## 0.0.2 - 2016-12-29
+### Added
+- Added CHANGELOG.md
+
+### Changed
+- The default Terminus version to install is now explicitly 1.0.0-beta.1 in order to get around Composer's minimum-stability.
