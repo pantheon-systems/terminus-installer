@@ -1,6 +1,10 @@
 #Change Log
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org)
 
+## 0.0.3 - 2017-01-10
+### Changed
+- Changed default install version to 1.0.0-beta.2
+
 ## 0.0.2 - 2016-12-29
 ### Added
 - Added CHANGELOG.md
