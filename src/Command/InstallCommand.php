@@ -2,29 +2,17 @@
 
 namespace Pantheon\TerminusInstaller\Command;
 
-use Composer\Console\Application as ComposerApp;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class InstallCommand
  * @package Pantheon\TerminusInstaller\Command
  */
-class InstallCommand extends Command
+class InstallCommand extends AbstractCommand
 {
-    const PACKAGE = 'pantheon-systems/terminus';
-    const PREFIX = 'TERMINUS_';
-    const TIMEOUT = 3600;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
     protected function configure()
     {
         $this->setName('install')
@@ -45,68 +33,10 @@ class InstallCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->output = $output;
-        $install_dir = $this->getInstallDir($input->getOption('install-dir'));
+        $install_dir = $this->getDir($input->getOption('install-dir'));
         $status_code = $this->installTerminus($install_dir, $input->getOption('install-version'));
         $this->makeSymlink($input->getOption('bin-dir'), $install_dir);
         return $status_code;
-    }
-
-    /**
-     * @return ComposerApp A configured Composer Application object
-     */
-    protected function getComposer()
-    {
-        $composer_app = new ComposerApp();
-        $composer_app->setAutoExit(false);
-        return $composer_app;
-    }
-
-    /**
-     * @return Filesystem A configured Symfony Filesystem object
-     */
-    protected function getFilesystem()
-    {
-        return new Filesystem();
-    }
-
-    /**
-     * Returns the appropriate home directory.
-     *
-     * Adapted from Terminus Package Manager by Ed Reel
-     * @author Ed Reel <@uberhacker>
-     * @url    https://github.com/uberhacker/tpm
-     *
-     * @return string
-     */
-    protected function getHomeDir()
-    {
-        $home = getenv('HOME');
-        if (!$home && !is_null(getenv('MSYSTEM')) && (strtoupper(substr(getenv('MSYSTEM'), 0, 4)) !== 'MING')) {
-            $home = getenv('HOMEPATH');
-        }
-        return $home;
-    }
-
-    /**
-     * @param string $dir The directory indicated for the install location
-     * @return string The install directory
-     */
-    protected function getInstallDir($dir = null)
-    {
-        return str_replace('~', $this->getHomeDir(), $dir);
-    }
-
-    /**
-     * @param string $install_version The specific version of Terminus to install
-     * @return string The name of the package for Composer install
-     */
-    protected function getPackageTitle($install_version = null)
-    {
-        $package = self::PACKAGE;
-        if (!is_null($version = $install_version)) {
-            $package .= ":$version";
-        }
-        return $package;
     }
 
     /**
@@ -137,11 +67,11 @@ class InstallCommand extends Command
     protected function makeSymlink($bin_dir, $install_dir)
     {
         $fs = $this->getFilesystem();
-        $exe_dir = "$install_dir/vendor/bin";
-        $exe_location = "$exe_dir/terminus";
+        $exe_dir = $install_dir . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'bin';
+        $exe_location = $exe_dir . DIRECTORY_SEPARATOR . 'terminus';
 
         if ($fs->exists($bin_dir) && is_writable($bin_dir) && is_writable($exe_location)) {
-            $fs->symlink($exe_location, "$bin_dir/terminus");
+            $fs->symlink($exe_location, $bin_dir . DIRECTORY_SEPARATOR . 'terminus');
         } else {
             $message = <<<EOT
 Terminus was installed, but the installer was not able to write to your bin dir. To enable the 
