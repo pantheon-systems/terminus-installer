@@ -3,6 +3,7 @@
 namespace Pantheon\TerminusInstaller\Console;
 
 use Pantheon\TerminusInstaller\Command\InstallCommand;
+use Pantheon\TerminusInstaller\Command\UpdateCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 
 /**
@@ -12,7 +13,7 @@ use Symfony\Component\Console\Application as BaseApplication;
 class Application extends BaseApplication
 {
     const NAME = 'Terminus Installer';
-    const VERSION = '0.0.4';
+    const VERSION = '0.1.0';
     private $logo_file = '../../assets/fist.txt';
 
     /**
@@ -38,6 +39,6 @@ class Application extends BaseApplication
      */
     protected function getDefaultCommands()
     {
-        return array_merge(parent::getDefaultCommands(), [new InstallCommand(),]);
+        return array_merge(parent::getDefaultCommands(), [new InstallCommand(), new UpdateCommand(),]);
     }
 }
