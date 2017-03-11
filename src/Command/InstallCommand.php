@@ -46,7 +46,8 @@ class InstallCommand extends AbstractCommand
      * @param string $install_version Version of Terminus to install
      * @return integer $status_code The status code of the installation run
      */
-    protected function installTerminus($install_dir, $install_version = null) {
+    protected function installTerminus($install_dir, $install_version = null)
+    {
         $arguments = [
             'command' => 'require',
             'packages' => [$this->getPackageTitle($install_version),],

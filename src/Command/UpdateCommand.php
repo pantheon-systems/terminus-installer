@@ -41,7 +41,8 @@ class UpdateCommand extends AbstractCommand
      * @param string $update_dir Directory to which to update Terminus
      * @return integer $status_code The status code of the update operation run
      */
-    protected function updateTerminus($update_dir) {
+    protected function updateTerminus($update_dir)
+    {
         $arguments = [
             'command' => 'update',
             'packages' => [$this->getPackageTitle(),],

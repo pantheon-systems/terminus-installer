@@ -47,7 +47,7 @@ abstract class AbstractCommand extends Command implements ComposerAwareInterface
     protected function getHomeDir()
     {
         $home = getenv('HOME');
-        if (!$home && !is_null(getenv('MSYSTEM')) && (strtoupper(substr(getenv('MSYSTEM'), 0, 4)) !== 'MING')) {
+        if (!$home && is_string(getenv('MSYSTEM')) && (strtoupper(substr(getenv('MSYSTEM'), 0, 4)) !== 'MING')) {
             $home = getenv('HOMEPATH');
         }
         return $home;
