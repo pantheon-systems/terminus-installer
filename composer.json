@@ -23,6 +23,11 @@
         "squizlabs/php_codesniffer": "^2.7",
         "satooshi/php-coveralls": "^1.0"
     },
+    "config": {
+        "platform": {
+            "php": "5.5.9"
+        }
+    },
     "scripts": {
         "coveralls": "phpunit -c tests/config/phpunit.xml.dist --coverage-clover tests/logs/clover.xml"
     }
