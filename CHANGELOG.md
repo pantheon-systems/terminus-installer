@@ -1,6 +1,10 @@
 #Change Log
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org)
 
+## MASTER
+### Changed
+- Changed composer installation to target minor version instead of patch (`^` instead of `~`)
+
 ## 0.1.0 - 2017-03-09
 ### Added
 - Added an `update` command

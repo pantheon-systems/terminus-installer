@@ -61,7 +61,7 @@ abstract class AbstractCommand extends Command implements ComposerAwareInterface
     {
         $package = self::PACKAGE_NAME;
         if (!is_null($version = $install_version)) {
-            $package .= ":$version";
+            $package .= ":^$version";
         }
         return $package;
     }
