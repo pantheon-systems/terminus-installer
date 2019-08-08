@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file. This projec
 
 ## MASTER
 ### Changed
-- Changed composer installation to target minor version instead of patch (`^` instead of `~`)
+- Changed composer installation to target minor version instead of patch (`^` instead of `~`) (#38)
 
 ## 0.1.0 - 2017-03-09
 ### Added
