@@ -2,7 +2,6 @@
 
 namespace Pantheon\TerminusInstaller\Command;
 
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,25 +35,6 @@ class InstallCommand extends AbstractCommand
         $install_dir = $this->getDir($input->getOption('install-dir'));
         $status_code = $this->installTerminus($install_dir, $input->getOption('install-version'));
         $this->makeSymlink($input->getOption('bin-dir'), $install_dir);
-        return $status_code;
-    }
-
-    /**
-     * Uses Composer to install Terminus
-     *
-     * @param string $install_dir Directory to which to install Terminus
-     * @param string $install_version Version of Terminus to install
-     * @return integer $status_code The status code of the installation run
-     */
-    protected function installTerminus($install_dir, $install_version = null) {
-        $arguments = [
-            'command' => 'require',
-            'packages' => [$this->getPackageTitle($install_version),],
-            '--working-dir' => $install_dir,
-        ];
-
-        $this->output->writeln('Installing Terminus...');
-        $status_code = $this->getComposer()->run(new ArrayInput($arguments), $this->output);
         return $status_code;
     }
 

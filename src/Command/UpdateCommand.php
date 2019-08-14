@@ -27,29 +27,27 @@ class UpdateCommand extends AbstractCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return integer $status_code The status code returned from Composer
+     * @return integer The status code returned from Composer
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->output = $output;
+        $install_dir = $this->getDir($input->getOption('dir'));
         $outdated_package_info = $this->standardizeOutdatedPackageInfo(
-            $this->getOutdatedPackageInfo($this->getDir($input->getOption('dir')))
+            $this->getOutdatedPackageInfo($install_dir)
         );
         $outdated_terminus_info = $this->getOutdatedTerminusInfo($outdated_package_info);
         if (!empty((array)$outdated_terminus_info)) {
             $this->validateTerminusData($outdated_terminus_info);
             if ($this->isTerminusOutdatedByMajorVersion($outdated_terminus_info)) {
-                die('outdated by major version');
-                //install not update
+                return $this->installTerminus($install_dir, $outdated_terminus_info->latest);
             } else {
-                die('is not so outdated 1');
-                $status_code = $this->updateTerminus($this->getDir($input->getOption('dir')));
+                return $this->updateTerminus($install_dir);
             }
         } else {
-            die('is not so outdated 2');
-            $status_code = $this->updateTerminus($this->getDir($input->getOption('dir')));
+            $this->output->writeln('Terminus does not require updating in this location');
         }
-        return $status_code;
+        return 0;
     }
 
     /**

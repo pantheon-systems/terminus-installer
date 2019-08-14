@@ -5,6 +5,7 @@ namespace Pantheon\TerminusInstaller\Command;
 use Pantheon\TerminusInstaller\Composer\ComposerAwareInterface;
 use Pantheon\TerminusInstaller\Composer\ComposerAwareTrait;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Filesystem\Filesystem;
 
 abstract class AbstractCommand extends Command implements ComposerAwareInterface
@@ -64,5 +65,24 @@ abstract class AbstractCommand extends Command implements ComposerAwareInterface
             $package .= ":^$version";
         }
         return $package;
+    }
+
+    /**
+     * Uses Composer to install Terminus
+     *
+     * @param string $install_dir Directory to which to install Terminus
+     * @param string $install_version Version of Terminus to install
+     * @return integer $status_code The status code of the installation run
+     */
+    protected function installTerminus($install_dir, $install_version = null) {
+        $arguments = [
+            'command' => 'require',
+            'packages' => [$this->getPackageTitle($install_version),],
+            '--working-dir' => $install_dir,
+        ];
+
+        $this->output->writeln('Installing Terminus...');
+        $status_code = $this->getComposer()->run(new ArrayInput($arguments), $this->output);
+        return $status_code;
     }
 }
