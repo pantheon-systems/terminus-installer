@@ -4,13 +4,18 @@ namespace Pantheon\TerminusInstaller\Command;
 
 use Pantheon\TerminusInstaller\Composer\ComposerAwareInterface;
 use Pantheon\TerminusInstaller\Composer\ComposerAwareTrait;
+use Pantheon\TerminusInstaller\Utils\LocalSystem;
+use Pantheon\TerminusInstaller\Utils\TerminusPackage;
+use Robo\Common\OutputAwareTrait;
+use Robo\Contract\OutputAwareInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class AbstractCommand extends Command implements ComposerAwareInterface
+abstract class AbstractCommand extends Command implements ComposerAwareInterface, OutputAwareInterface
 {
     use ComposerAwareTrait;
+    use OutputAwareTrait;
 
     const PACKAGE_NAME = 'pantheon-systems/terminus';
 
@@ -18,40 +23,17 @@ abstract class AbstractCommand extends Command implements ComposerAwareInterface
      * @var OutputInterface
      */
     protected $output;
-
     /**
-     * @param string $dir The directory indicated for the update location
-     * @return string The update directory
+     * @var TerminusPackage
      */
-    protected function getDir($dir = null)
-    {
-        return str_replace('~', $this->getHomeDir(), $dir);
-    }
+    protected $package;
 
-    /**
-     * @return Filesystem A configured Symfony Filesystem object
-     */
-    protected function getFilesystem()
+    protected function getPackage()
     {
-        return new Filesystem();
-    }
-
-    /**
-     * Returns the appropriate home directory.
-     *
-     * Adapted from Terminus Package Manager by Ed Reel
-     * @author Ed Reel <@uberhacker>
-     * @url    https://github.com/uberhacker/tpm
-     *
-     * @return string
-     */
-    protected function getHomeDir()
-    {
-        $home = getenv('HOME');
-        if (!$home && !is_null(getenv('MSYSTEM')) && (strtoupper(substr(getenv('MSYSTEM'), 0, 4)) !== 'MING')) {
-            $home = getenv('HOMEPATH');
+        if (empty($this->package)) {
+            $this->package = new TerminusPackage();
         }
-        return $home;
+        return $this->package;
     }
 
     /**
@@ -82,7 +64,15 @@ abstract class AbstractCommand extends Command implements ComposerAwareInterface
         ];
 
         $this->output->writeln('Installing Terminus...');
-        $status_code = $this->getComposer()->run(new ArrayInput($arguments), $this->output);
+        $status_code = $this->getComposer()->run(new ArrayInput($arguments), $this->output());
         return $status_code;
+    }
+
+    /**
+     * @param string $dir The directory indicated for the update location
+     */
+    protected function setDir($dir = null)
+    {
+        $this->working_directory = LocalSystem::sanitizeLocation($dir);
     }
 }
