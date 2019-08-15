@@ -52,22 +52,12 @@ class UpdateCommand extends Command
             );
             if ($this->getHelper('question')->ask($input, $output, $question)) {
                 $output->writeln('Updating Terminus to latest version...');
-                $status_code = $package->runInstallLatest($output);
-
-                // Return status code of installation
-                return $status_code;
+                return $package->runInstallLatest($output);
             }
+            $output->writeln('Performing non-breaking updates...');
+        } else {
+            $output->writeln('Updating Terminus...');
         }
-
-        // Execute the update
-        $output->writeln(
-            $package->onCurrentMinorVersion()
-                ? 'Updating Terminus to latest patch version...'
-                : 'Updating Terminus to latest minor version...'
-        );
-        $status_code = $package->runUpdate($output);
-
-        // Return status code of update
-        return $status_code;
+        return $package->runUpdate($output);
     }
 }

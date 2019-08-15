@@ -49,6 +49,9 @@ class InstallCommand extends Command
             $output,
             $input->getOption('install-version')
         );
+        if ($status_code > 0) {
+            return $status_code;
+        }
 
         // Ensure the installed package is easy to find
         try {
@@ -64,8 +67,8 @@ class InstallCommand extends Command
             return 1;
         }
 
-        // Return status code of installation
-        return $status_code;
+        // Return success
+        return 0;
     }
 
     private static function overwriteErrorMessage($dir, $location)
