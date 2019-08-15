@@ -40,7 +40,7 @@ class TerminusPackage implements ComposerAwareInterface
      */
     public function getExeName()
     {
-        return self::getLocation($this->getExeDir());
+        return self::getBinLocation($this->getExeDir());
     }
 
     /**
@@ -71,7 +71,7 @@ class TerminusPackage implements ComposerAwareInterface
      * @param string $dir The directory Terminus executable should be located in
      * @return string The location where Terminus should exist
      */
-    public static function getLocation($dir)
+    public static function getBinLocation($dir)
     {
         return LocalSystem::sanitizeLocation(
             str_replace('{dir}', $dir, self::EXE_NAME)
@@ -94,7 +94,7 @@ class TerminusPackage implements ComposerAwareInterface
      */
     public function isUpToDate()
     {
-        return $this->versionCompare();
+        return $this->isInstalledVersionLatest();
     }
 
     /**
@@ -103,21 +103,9 @@ class TerminusPackage implements ComposerAwareInterface
      * @return boolean
      */
     public function onCurrentMajorVersion() {
-        return $this->versionCompare(function($version) {
+        return $this->isInstalledVersionLatest(function($version) {
             $version_array = explode('.', $version);
             return array_shift($version_array);
-        });
-    }
-
-    /**
-     * Checks for Terminus being outdated by at least one minor version
-     *
-     * @return boolean
-     */
-    public function onCurrentMinorVersion() {
-        return $this->versionCompare(function($version) {
-            $version_array = explode('.', $version);
-            return array_shift($version_array) . '.' . array_shift($version_array);
         });
     }
 
@@ -227,9 +215,11 @@ class TerminusPackage implements ComposerAwareInterface
     }
 
     /**
-     * @param function $transform
+     * Determines whether the latest and installed versions of Terminus are the same
+     *
+     * @param function $transform Applied to version numbers before comparing
      */
-    private function versionCompare($transform = null)
+    private function isInstalledVersionLatest($transform = null)
     {
         if (is_null($transform)) {
             $transform = function ($version) {

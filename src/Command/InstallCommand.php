@@ -56,7 +56,7 @@ class InstallCommand extends Command
         // Ensure the installed package is easy to find
         try {
             $exe_location = $package->getExeName();
-            $bin_location = TerminusPackage::getLocation($input->getOption('bin-dir'));
+            $bin_location = TerminusPackage::getBinLocation($input->getOption('bin-dir'));
             LocalSystem::makeSymlink($exe_location, $bin_location);
         } catch (ForbiddenOverwriteException $e) {
             // Couldn't write symlink at the location
