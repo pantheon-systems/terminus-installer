@@ -51,6 +51,9 @@ class TerminusPackage implements ComposerAwareInterface
         return $this->install_dir;
     }
 
+    /**
+     * @return mixed Returns the version of Terminus currently installed
+     */
     public function getInstalledVersion()
     {
         return str_replace('* ', '', $this->getOutdatedInfo()['versions']);

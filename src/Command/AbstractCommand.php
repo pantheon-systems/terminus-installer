@@ -6,16 +6,13 @@ use Pantheon\TerminusInstaller\Composer\ComposerAwareInterface;
 use Pantheon\TerminusInstaller\Composer\ComposerAwareTrait;
 use Pantheon\TerminusInstaller\Utils\LocalSystem;
 use Pantheon\TerminusInstaller\Utils\TerminusPackage;
-use Robo\Common\OutputAwareTrait;
-use Robo\Contract\OutputAwareInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class AbstractCommand extends Command implements ComposerAwareInterface, OutputAwareInterface
+abstract class AbstractCommand extends Command implements ComposerAwareInterface
 {
     use ComposerAwareTrait;
-    use OutputAwareTrait;
 
     const PACKAGE_NAME = 'pantheon-systems/terminus';
 
