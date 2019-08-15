@@ -16,21 +16,21 @@ class LocalSystem
      */
     public static function makeSymlink($source, $target)
     {
+        $sanitized_source = self::sanitizeLocation($source);
+        $sanitized_target = self::sanitizeLocation($target);
+
         $fs = self::getFilesystem();
-        if (!$fs->exists($source)) {
+        if (!$fs->exists($sanitized_source)) {
             throw new FileNotFoundException("$source does not exist.");
         }
-        if (!is_writable($source)) {
+        if (!is_writable($sanitized_source)) {
             throw new ForbiddenOverwriteException("$source is not writable.");
         }
-        if (!is_writable($target)) {
+        if (!is_writable($sanitized_target)) {
             throw new ForbiddenOverwriteException("$target is not writable.");
         }
 
-        $fs->symlink(
-            self::sanitizeLocation($target),
-            self::sanitizeLocation($source)
-        );
+        $fs->symlink($sanitized_target, $sanitized_source);
     }
 
     /**
