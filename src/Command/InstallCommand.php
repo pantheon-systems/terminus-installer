@@ -38,7 +38,6 @@ class InstallCommand extends AbstractCommand
         // Configure the package
         $package = new TerminusPackage();
         $package->setInstallDir($input->getOption('install-dir'));
-        $package->setOutput($output);
 
         // Execute the installation
         $output->writeln('Installing Terminus...');
@@ -54,8 +53,20 @@ class InstallCommand extends AbstractCommand
             LocalSystem::makeSymlink($exe_location, $bin_location);
         } catch (ForbiddenOverwriteException $e) {
             // Couldn't write symlink at the location
-            $exe_dir = $package->getExeDir();
-            $message = <<<EOT
+            $output->writeln(self::overwriteErrorMessage($package->getExeDir(), $exe_location));
+        } catch (FileNotFoundException $e) {
+            // Discovered that the executable wasn't present
+            $output->writeln('Terminus was not installed.');
+            return 1;
+        }
+
+        // Return status code of installation
+        return $status_code;
+    }
+
+    private static function overwriteErrorMessage($dir, $location)
+    {
+        return <<<EOT
 Terminus was installed, but the installer was not able to write to your bin dir. To enable the 
 `terminus` command, add this alias to your .bash_profile (Mac) or .bashrc (Linux) file:
 
@@ -65,14 +76,5 @@ Or you can enable it by adding the directory the executable file is in to your p
 
 PATH="$exe_dir:\$PATH"
 EOT;
-            $output->writeln($message);
-        } catch (FileNotFoundException $e) {
-            // Discovered that the executable wasn't present
-            $output->writeln('Terminus was not installed.');
-            return 1;
-        }
-
-        // Return status code of installation
-        return $status_code;
     }
 }
