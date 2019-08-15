@@ -5,6 +5,7 @@ namespace Pantheon\TerminusInstaller\Command;
 use Pantheon\TerminusInstaller\Utils\LocalSystem;
 use Pantheon\TerminusInstaller\Utils\TerminusPackage;
 use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,8 +15,11 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
  * Class InstallCommand
  * @package Pantheon\TerminusInstaller\Command
  */
-class InstallCommand extends AbstractCommand
+class InstallCommand extends Command
 {
+    /**
+     * @inheritDoc
+     */
     protected function configure()
     {
         $this->setName('install')
@@ -70,11 +74,11 @@ class InstallCommand extends AbstractCommand
 Terminus was installed, but the installer was not able to write to your bin dir. To enable the 
 `terminus` command, add this alias to your .bash_profile (Mac) or .bashrc (Linux) file:
 
-alias terminus=$exe_location
+alias terminus=$location
 
 Or you can enable it by adding the directory the executable file is in to your path:
 
-PATH="$exe_dir:\$PATH"
+PATH="$dir:\$PATH"
 EOT;
     }
 }

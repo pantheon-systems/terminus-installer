@@ -2,6 +2,8 @@
 
 namespace Pantheon\TerminusInstaller\Command;
 
+use Pantheon\TerminusInstaller\Utils\TerminusPackage;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -9,10 +11,13 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class UpdateCommand
- * @package Pantheon\TerminusUpdateer\Command
+ * @package Pantheon\TerminusInstaller\Command
  */
-class UpdateCommand extends AbstractCommand
+class UpdateCommand extends Command
 {
+    /**
+     * @inheritDoc
+     */
     protected function configure()
     {
         $this->setName('update')
@@ -30,7 +35,7 @@ class UpdateCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $package = $this->getPackage();
+        $package = new TerminusPackage();
         $package->setInstallDir($input->getOption('install-dir'));
 
         $output->writeln('Checking package version...');
