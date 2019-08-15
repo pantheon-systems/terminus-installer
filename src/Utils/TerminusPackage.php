@@ -151,7 +151,7 @@ class TerminusPackage implements ComposerAwareInterface
      */
     public function runInstallLatest(OutputInterface $output)
     {
-        return $this->runInstall($output, $this->getLatestVersion());
+        return $this->runInstall($output, '^' . $this->getLatestVersion());
     }
 
     /**
@@ -212,6 +212,21 @@ class TerminusPackage implements ComposerAwareInterface
     }
 
     /**
+     * Returns the package title with the version appended, if given
+     *
+     * @param string $install_version The specific version of Terminus to install
+     * @return string The name of the package for Composer install
+     */
+    private function getPackageTitle($install_version = null)
+    {
+        $package = self::PACKAGE_NAME;
+        if (is_null($install_version)) {
+            return $package;
+        }
+        return "$package:$install_version";
+    }
+
+    /**
      * @param function $transform
      */
     private function versionCompare($transform = null)
@@ -226,20 +241,5 @@ class TerminusPackage implements ComposerAwareInterface
             $transform($this->getInstalledVersion()),
             '=='
         );
-    }
-
-    /**
-     * Returns the package title with the version appended, if given
-     *
-     * @param string $install_version The specific version of Terminus to install
-     * @return string The name of the package for Composer install
-     */
-    public function getPackageTitle($install_version = null)
-    {
-        $package = self::PACKAGE_NAME;
-        if (!is_null($version = $install_version)) {
-            $package .= ":^$version";
-        }
-        return $package;
     }
 }
