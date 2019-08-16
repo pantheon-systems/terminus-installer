@@ -2,17 +2,24 @@
 
 namespace Pantheon\TerminusInstaller\Command;
 
-use Symfony\Component\Console\Input\ArrayInput;
+use Pantheon\TerminusInstaller\Utils\LocalSystem;
+use Pantheon\TerminusInstaller\Utils\TerminusPackage;
+use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 /**
  * Class InstallCommand
  * @package Pantheon\TerminusInstaller\Command
  */
-class InstallCommand extends AbstractCommand
+class InstallCommand extends Command
 {
+    /**
+     * @inheritDoc
+     */
     protected function configure()
     {
         $this->setName('install')
@@ -32,58 +39,49 @@ class InstallCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->output = $output;
-        $install_dir = $this->getDir($input->getOption('install-dir'));
-        $status_code = $this->installTerminus($install_dir, $input->getOption('install-version'));
-        $this->makeSymlink($input->getOption('bin-dir'), $install_dir);
-        return $status_code;
+        // Configure the package
+        $package = new TerminusPackage();
+        $package->setInstallDir($input->getOption('install-dir'));
+
+        // Execute the installation
+        $output->writeln('Installing Terminus...');
+        $status_code = $package->runInstall(
+            $output,
+            $input->getOption('install-version')
+        );
+        if ($status_code > 0) {
+            return $status_code;
+        }
+
+        // Ensure the installed package is easy to find
+        try {
+            $exe_location = $package->getExeName();
+            $bin_location = TerminusPackage::getBinLocation($input->getOption('bin-dir'));
+            LocalSystem::makeSymlink($exe_location, $bin_location);
+        } catch (ForbiddenOverwriteException $e) {
+            // Couldn't write symlink at the location
+            $output->writeln(self::overwriteErrorMessage($package->getExeDir(), $exe_location));
+        } catch (FileNotFoundException $e) {
+            // Discovered that the executable wasn't present
+            $output->writeln('Terminus was not installed.');
+            return 1;
+        }
+
+        // Return success
+        return 0;
     }
 
-    /**
-     * Uses Composer to install Terminus
-     *
-     * @param string $install_dir Directory to which to install Terminus
-     * @param string $install_version Version of Terminus to install
-     * @return integer $status_code The status code of the installation run
-     */
-    protected function installTerminus($install_dir, $install_version = null) {
-        $arguments = [
-            'command' => 'require',
-            'packages' => [$this->getPackageTitle($install_version),],
-            '--working-dir' => $install_dir,
-        ];
-
-        $this->output->writeln('Installing Terminus...');
-        $status_code = $this->getComposer()->run(new ArrayInput($arguments), $this->output);
-        return $status_code;
-    }
-
-    /**
-     * Writes a symlink for the newly installed Terminus' executable in the bin directory
-     *
-     * @param string $bin_dir Bin directory
-     * @param string $install_dir Dir to which Terminus was installed
-     */
-    protected function makeSymlink($bin_dir, $install_dir)
+    private static function overwriteErrorMessage($dir, $location)
     {
-        $fs = $this->getFilesystem();
-        $exe_dir = $install_dir . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'bin';
-        $exe_location = $exe_dir . DIRECTORY_SEPARATOR . 'terminus';
-
-        if ($fs->exists($bin_dir) && is_writable($bin_dir) && is_writable($exe_location)) {
-            $fs->symlink($exe_location, $bin_dir . DIRECTORY_SEPARATOR . 'terminus');
-        } else {
-            $message = <<<EOT
+        return <<<EOT
 Terminus was installed, but the installer was not able to write to your bin dir. To enable the 
 `terminus` command, add this alias to your .bash_profile (Mac) or .bashrc (Linux) file:
 
-alias terminus=$exe_location
+alias terminus=$location
 
 Or you can enable it by adding the directory the executable file is in to your path:
 
-PATH="$exe_dir:\$PATH"
+PATH="$dir:\$PATH"
 EOT;
-            $this->output->writeln($message);
-        }
     }
 }

@@ -2,23 +2,28 @@
 
 namespace Pantheon\TerminusInstaller\Command;
 
-use Symfony\Component\Console\Input\ArrayInput;
+use Pantheon\TerminusInstaller\Utils\TerminusPackage;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class UpdateCommand
- * @package Pantheon\TerminusUpdateer\Command
+ * @package Pantheon\TerminusInstaller\Command
  */
-class UpdateCommand extends AbstractCommand
+class UpdateCommand extends Command
 {
+    /**
+     * @inheritDoc
+     */
     protected function configure()
     {
         $this->setName('update')
             ->setDescription('Updates Terminus via Composer')
             ->setDefinition([
-                new InputOption('dir', null, InputOption::VALUE_OPTIONAL, 'The directory in which to find Terminus', getcwd()),
+                new InputOption('install-dir', 'dir', InputOption::VALUE_OPTIONAL, 'The directory in which to find Terminus', getcwd()),
             ])
             ->setHelp('Updates the Terminus CLI.');
     }
@@ -26,30 +31,33 @@ class UpdateCommand extends AbstractCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return integer $status_code The status code returned from Composer
+     * @return integer The status code returned from Composer
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->output = $output;
-        $status_code = $this->updateTerminus($this->getDir($input->getOption('dir')));
-        return $status_code;
-    }
+        $package = new TerminusPackage();
+        $package->setInstallDir($input->getOption('install-dir'));
 
-    /**
-     * Uses Composer to update Terminus
-     *
-     * @param string $update_dir Directory to which to update Terminus
-     * @return integer $status_code The status code of the update operation run
-     */
-    protected function updateTerminus($update_dir) {
-        $arguments = [
-            'command' => 'update',
-            'packages' => [$this->getPackageTitle(),],
-            '--working-dir' => $update_dir,
-        ];
+        $output->writeln('Checking package version...');
+        if ($package->isUpToDate()) {
+            $output->writeln('Terminus does not require updating in this location');
+            return 0;
+        }
 
-        $this->output->writeln('Updating Terminus...');
-        $status_code = $this->getComposer()->run(new ArrayInput($arguments), $this->output);
-        return $status_code;
+        // If you are behind by a major version get an OK to upgrade it
+        if (!$package->onCurrentMajorVersion()) {
+            $question = new ConfirmationQuestion(
+                'You are behind by at least one major version! Upgrading may break your scripts.' . PHP_EOL . 'Continue? (Y/n)' . PHP_EOL,
+                false
+            );
+            if ($this->getHelper('question')->ask($input, $output, $question)) {
+                $output->writeln('Updating Terminus to latest version...');
+                return $package->runInstallLatest($output);
+            }
+            $output->writeln('Performing non-breaking updates...');
+        } else {
+            $output->writeln('Updating Terminus...');
+        }
+        return $package->runUpdate($output);
     }
 }
