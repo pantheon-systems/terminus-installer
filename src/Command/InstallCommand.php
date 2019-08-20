@@ -48,7 +48,6 @@ class InstallCommand extends Command
         $exe_location = $package->getExeName();
 
         // Remove the existing version of Terminus
-        var_dump($exe_location);
         if (LocalSystem::fileExists($exe_location)) {
             $question = new ConfirmationQuestion(
                 'The installer has found another installation of Terminus in this location.' . PHP_EOL . 'Remove the old version? (Y/n) ',
