@@ -143,6 +143,25 @@ class TerminusPackage implements ComposerAwareInterface
     }
 
     /**
+     * Runs composer remove to uninstall Terminus
+     *
+     * @param OutputInterface $output
+     * @return int $status_code The status code returned from composer remove
+     * @throws \Exception
+     */
+    public function runRemove(OutputInterface $output)
+    {
+        $arguments = [
+            'command' => 'remove',
+            'packages' => [$this->getPackageTitle(),],
+            '--working-dir' => $this->getInstallDir(),
+        ];
+
+        $status_code = $this->getComposer()->run(new ArrayInput($arguments), $output);
+        return $status_code;
+    }
+
+    /**
      * Runs composer update to update Terminus
      *
      * @param OutputInterface $output
