@@ -9,6 +9,16 @@ use Symfony\Component\Filesystem\Filesystem;
 class LocalSystem
 {
     /**
+     * @param string $location Location to check for existence of
+     */
+    public static function fileExists($location)
+    {
+        $sanitized_location = self::sanitizeLocation($location);
+        $fs = self::getFilesystem();
+        return $fs->exists(self::sanitizeLocation($sanitized_location));
+    }
+
+    /**
      * Writes a symlink for the newly installed Terminus' executable in the bin directory
      *
      * @param string $source Location to make a symlink of
@@ -19,8 +29,8 @@ class LocalSystem
         $sanitized_source = self::sanitizeLocation($source);
         $sanitized_target = self::sanitizeLocation($target);
 
-        $fs = self::getFilesystem();
-        if (!$fs->exists($sanitized_source)) {
+
+        if (self::fileExists($source)) {
             throw new FileNotFoundException("$source does not exist.");
         }
         if (!is_writable($sanitized_source)) {
@@ -30,6 +40,7 @@ class LocalSystem
             throw new ForbiddenOverwriteException("$target is not writable.");
         }
 
+        $fs = self::getFilesystem();
         $fs->symlink($sanitized_target, $sanitized_source);
     }
 

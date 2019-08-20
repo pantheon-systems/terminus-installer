@@ -47,7 +47,7 @@ class UpdateCommand extends Command
         // If you are behind by a major version get an OK to upgrade it
         if (!$package->onCurrentMajorVersion()) {
             $question = new ConfirmationQuestion(
-                'You are behind by at least one major version! Upgrading may break your scripts.' . PHP_EOL . 'Continue? (Y/n)' . PHP_EOL,
+                'You are behind by at least one major version! Upgrading may break your scripts.' . PHP_EOL . 'Continue? (Y/n) ',
                 false
             );
             if ($this->getHelper('question')->ask($input, $output, $question)) {

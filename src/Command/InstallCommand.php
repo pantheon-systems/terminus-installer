@@ -8,7 +8,9 @@ use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 /**
@@ -28,6 +30,7 @@ class InstallCommand extends Command
                 new InputOption('bin-dir', null, InputOption::VALUE_OPTIONAL, 'Directory in which command-line executable scripts are added', '/usr/local/bin'),
                 new InputOption('install-dir', null, InputOption::VALUE_OPTIONAL, 'Directory to which to install Terminus', getcwd()),
                 new InputOption('install-version', null, InputOption::VALUE_OPTIONAL, 'Version of Terminus to install'),
+                new InputOption('remove-outdated', null, InputOption::VALUE_OPTIONAL, 'Remove any versions of Terminus in the install directory before installing.', false),
             ])
             ->setHelp('Installs the Terminus CLI.');
     }
@@ -42,20 +45,35 @@ class InstallCommand extends Command
         // Configure the package
         $package = new TerminusPackage();
         $package->setInstallDir($input->getOption('install-dir'));
+        $exe_location = $package->getExeName();
+
+        // Remove the existing version of Terminus
+        var_dump($exe_location);
+        if (LocalSystem::fileExists($exe_location)) {
+            $question = new ConfirmationQuestion(
+                'The installer has found another installation of Terminus in this location.' . PHP_EOL . 'Remove the old version? (Y/n) ',
+                false
+            );
+            if ($input->getOption('remove-outdated')
+                || $this->getHelper('question')->ask($input, $output, $question)
+            ) {
+                $output->writeln('Removing the old version of Terminus...');
+                $package->runRemove(new NullOutput());
+            }
+        }
 
         // Execute the installation
         $output->writeln('Installing Terminus...');
-        $status_code = $package->runInstall(
+        $status_code_install = $package->runInstall(
             $output,
             $input->getOption('install-version')
         );
-        if ($status_code > 0) {
-            return $status_code;
+        if ($status_code_install > 0) {
+            return $status_code_install;
         }
 
         // Ensure the installed package is easy to find
         try {
-            $exe_location = $package->getExeName();
             $bin_location = TerminusPackage::getBinLocation($input->getOption('bin-dir'));
             LocalSystem::makeSymlink($exe_location, $bin_location);
         } catch (ForbiddenOverwriteException $e) {
