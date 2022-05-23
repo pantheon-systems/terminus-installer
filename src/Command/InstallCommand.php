@@ -12,6 +12,7 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 /**
  * Class InstallCommand
@@ -30,7 +31,7 @@ class InstallCommand extends Command
                 new InputOption('bin-dir', null, InputOption::VALUE_OPTIONAL, 'Directory in which command-line executable scripts are added', '/usr/local/bin'),
                 new InputOption('install-dir', null, InputOption::VALUE_OPTIONAL, 'Directory to which to install Terminus', getcwd()),
                 new InputOption('install-version', null, InputOption::VALUE_OPTIONAL, 'Version of Terminus to install'),
-                new InputOption('remove-outdated', null, InputOption::VALUE_OPTIONAL, 'Remove any versions of Terminus in the install directory before installing.', false),
+                new InputOption('remove-outdated', null, InputOption::VALUE_NONE, 'Remove any versions of Terminus in the install directory before installing.'),
             ])
             ->setHelp('Installs the Terminus CLI.');
     }
@@ -48,7 +49,7 @@ class InstallCommand extends Command
         $exe_location = $package->getExeName();
 
         // Remove the existing version of Terminus
-        if (LocalSystem::fileExists($exe_location)) {
+        if ($exe_location && LocalSystem::fileExists($exe_location)) {
             $question = new ConfirmationQuestion(
                 'The installer has found another installation of Terminus in this location.' . PHP_EOL . 'Remove the old version? (Y/n) ',
                 false
@@ -58,6 +59,9 @@ class InstallCommand extends Command
             ) {
                 $output->writeln('Removing the old version of Terminus...');
                 $package->runRemove(new NullOutput());
+            } else {
+                $output->writeln('Skipping removal of the old version of Terminus. Nothing to do.');
+                return 0;
             }
         }
 
@@ -73,9 +77,10 @@ class InstallCommand extends Command
 
         // Ensure the installed package is easy to find
         try {
+
             $bin_location = TerminusPackage::getBinLocation($input->getOption('bin-dir'));
             LocalSystem::makeSymlink($exe_location, $bin_location);
-        } catch (ForbiddenOverwriteException $e) {
+        } catch (ForbiddenOverwriteException | IOException $e) {
             // Couldn't write symlink at the location
             $output->writeln(self::overwriteErrorMessage($package->getExeDir(), $exe_location));
         } catch (FileNotFoundException $e) {

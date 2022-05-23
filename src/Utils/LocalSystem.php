@@ -30,11 +30,8 @@ class LocalSystem
         $sanitized_target = self::sanitizeLocation($target);
 
 
-        if (self::fileExists($source)) {
+        if (!self::fileExists($source)) {
             throw new FileNotFoundException("$source does not exist.");
-        }
-        if (!is_writable($sanitized_source)) {
-            throw new ForbiddenOverwriteException("$source is not writable.");
         }
         if (!is_writable($sanitized_target)) {
             throw new ForbiddenOverwriteException("$target is not writable.");
@@ -54,12 +51,10 @@ class LocalSystem
      */
     public static function sanitizeLocation($dir = null)
     {
-        return realpath(
-            str_replace(
-                ['~', '/',],
-                [self::getHomeDir(), DIRECTORY_SEPARATOR,],
-                $dir
-            )
+        return str_replace(
+            ['~', '/',],
+            [self::getHomeDir(), DIRECTORY_SEPARATOR,],
+            $dir
         );
     }
 
