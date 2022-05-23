@@ -5,6 +5,7 @@ namespace Pantheon\TerminusInstaller\Utils;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 class TerminusPackage
 {
@@ -53,7 +54,7 @@ class TerminusPackage
      */
     public function getFixedVersion()
     {
-        return '3.0.6';
+        return '3.0.7';
     }
 
     /**
@@ -79,13 +80,20 @@ class TerminusPackage
     public function runInstall(OutputInterface $output, $version = null)
     {
         $url = str_replace('{version}', $version ?: $this->getFixedVersion(), self::DOWNLOAD_URL);
-        $file_name = $this->getInstallDir() . DIRECTORY_SEPARATOR . 'terminus';
+        $fileName = $this->getInstallDir() . DIRECTORY_SEPARATOR . 'terminus';
 
-        if (file_put_contents($file_name, file_get_contents($url)))
+        if (file_put_contents($fileName, file_get_contents($url)))
         {
             $output->writeln('File downloaded successfully');
+            $commandLine = sprintf('chmod +x %s', $fileName);
+            $process = new Process($commandLine);
+            $process->run();
+
             if (!$version) {
-                // @todo Run self-update.
+                $output->writeln('Running self:update to get the latest version of Terminus...');
+                $commandLine = sprintf('%s self:update', $fileName);
+                $process = new Process($commandLine);
+                $process->run();
             }
             return 0;
         }

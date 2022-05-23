@@ -51,11 +51,11 @@ class LocalSystem
      */
     public static function sanitizeLocation($dir = null)
     {
-        return str_replace(
+        return realpath(str_replace(
             ['~', '/',],
             [self::getHomeDir(), DIRECTORY_SEPARATOR,],
             $dir
-        );
+        ));
     }
 
     /**

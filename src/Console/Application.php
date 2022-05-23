@@ -13,7 +13,7 @@ use Symfony\Component\Console\Application as BaseApplication;
 class Application extends BaseApplication
 {
     const NAME = 'Terminus Installer';
-    const VERSION = '0.1.0';
+    const VERSION = '0.1.1';
     private $logo_file = '../../assets/fist.txt';
 
     /**
