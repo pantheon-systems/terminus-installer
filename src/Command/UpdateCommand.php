@@ -35,29 +35,6 @@ class UpdateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $package = new TerminusPackage();
-        $package->setInstallDir($input->getOption('install-dir'));
-
-        $output->writeln('Checking package version...');
-        if ($package->isUpToDate()) {
-            $output->writeln('Terminus does not require updating in this location');
-            return 0;
-        }
-
-        // If you are behind by a major version get an OK to upgrade it
-        if (!$package->onCurrentMajorVersion()) {
-            $question = new ConfirmationQuestion(
-                'You are behind by at least one major version! Upgrading may break your scripts.' . PHP_EOL . 'Continue? (Y/n) ',
-                false
-            );
-            if ($this->getHelper('question')->ask($input, $output, $question)) {
-                $output->writeln('Updating Terminus to latest version...');
-                return $package->runInstallLatest($output);
-            }
-            $output->writeln('Performing non-breaking updates...');
-        } else {
-            $output->writeln('Updating Terminus...');
-        }
-        return $package->runUpdate($output);
+        $output->writeln('This command is deprecated. Please use `terminus self-update` instead.');
     }
 }
