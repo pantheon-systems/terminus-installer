@@ -14,5 +14,4 @@ jobs:
       #- name: Phar Build
       #  run: composer phar:build
       - name: Run tests
-        run: ./.github/workflows/test.sh ../self-update-fixture
-        working-directory: self-update
+        run: ./.github/workflows/test.sh
