@@ -50,9 +50,9 @@ class TerminusPackage
     }
 
     /**
-     * @return string Latest version of Terminus according to Composer
+     * @return string Initial version to download from Github.
      */
-    public function getFixedVersion()
+    public function getInitialDownloadVersion()
     {
         return '3.0.7';
     }
@@ -79,7 +79,7 @@ class TerminusPackage
      */
     public function runInstall(OutputInterface $output, $version = null)
     {
-        $url = str_replace('{version}', $version ?: $this->getFixedVersion(), self::DOWNLOAD_URL);
+        $url = str_replace('{version}', $version ?: $this->getInitialDownloadVersion(), self::DOWNLOAD_URL);
         $fileName = $this->getInstallDir() . DIRECTORY_SEPARATOR . 'terminus';
 
         if (file_put_contents($fileName, file_get_contents($url)))
