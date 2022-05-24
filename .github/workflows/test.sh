@@ -15,13 +15,16 @@ echo "Install terminus in given folder and remove outdated..."
 
 echo "Install specific terminus version..."
 ./bin/installer install --install-dir=../installer-results --version=3.0.4 --remove-outdated | grep "File downloaded successfully"
+../installer-results/terminus --version
 ../installer-results/terminus --version | grep "3.0.4"
 
 echo "Install without removing outdated..."
 ./bin/installer install --install-dir=../installer-results | grep "Nothing to do"
+../installer-results/terminus --version
 ../installer-results/terminus --version | grep "3.0.4"
 
 echo "Install without removing outdated..."
 rm ../installer-results/terminus
 ./bin/installer install --install-dir=../installer-results | grep "File downloaded successfully"
+../installer-results/terminus --version
 ../installer-results/terminus --version | grep -v "3.0.4"
