@@ -3,7 +3,6 @@
 set -ex
 
 echo "Delete and recreate folder as needed..."
-rm -r ../installer-results
 mkdir ../installer-results
 
 echo "Install terminus in given folder..."
