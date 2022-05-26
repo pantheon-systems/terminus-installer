@@ -2,7 +2,7 @@
 
 namespace Pantheon\TerminusInstaller\Utils;
 
-use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -33,12 +33,12 @@ class LocalSystem
         if (!self::fileExists($source)) {
             throw new FileNotFoundException("$source does not exist.");
         }
-        if (!is_writable($sanitized_target)) {
-            throw new ForbiddenOverwriteException("$target is not writable.");
+        if (!is_writable(dirname($sanitized_target))) {
+            throw new IOException("$target is not writable.");
         }
 
         $fs = self::getFilesystem();
-        $fs->symlink($sanitized_target, $sanitized_source);
+        $fs->symlink($sanitized_source, $sanitized_target);
     }
 
     /**
@@ -51,11 +51,15 @@ class LocalSystem
      */
     public static function sanitizeLocation($dir = null)
     {
-        return realpath(str_replace(
+        $dir = str_replace(
             ['~', '/',],
             [self::getHomeDir(), DIRECTORY_SEPARATOR,],
             $dir
-        ));
+        );
+        if (!file_exists($dir)) {
+            return $dir;
+        }
+        return realpath($dir);
     }
 
     /**

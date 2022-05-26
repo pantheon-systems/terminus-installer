@@ -4,7 +4,6 @@ namespace Pantheon\TerminusInstaller\Command;
 
 use Pantheon\TerminusInstaller\Utils\LocalSystem;
 use Pantheon\TerminusInstaller\Utils\TerminusPackage;
-use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -80,7 +79,7 @@ class InstallCommand extends Command
 
             $bin_location = TerminusPackage::getBinLocation($input->getOption('bin-dir'));
             LocalSystem::makeSymlink($exe_location, $bin_location);
-        } catch (ForbiddenOverwriteException | IOException $e) {
+        } catch (\Exception | IOException $e) {
             // Couldn't write symlink at the location
             $output->writeln(self::overwriteErrorMessage($package->getExeDir(), $exe_location));
         } catch (FileNotFoundException $e) {
