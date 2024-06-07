@@ -3,7 +3,6 @@
 ## Status
 [![Build Status](https://travis-ci.org/pantheon-systems/terminus-installer.svg?branch=master)](https://travis-ci.org/pantheon-systems/terminus-installer)
 [![Dependency Status](https://gemnasium.com/pantheon-systems/terminus-installer.svg)](https://gemnasium.com/pantheon-systems/terminus-installer)
-[![Coverage Status](https://coveralls.io/repos/github/pantheon-systems/terminus-installer/badge.svg?branch=master)](https://coveralls.io/github/pantheon-systems/terminus-installer?branch=master)
 [![Deprecated](https://img.shields.io/badge/Pantheon-Deprecated-yellow?logo=pantheon&color=FFDC28)](https://pantheon.io/docs/oss-support-levels#deprecated)
 
  
